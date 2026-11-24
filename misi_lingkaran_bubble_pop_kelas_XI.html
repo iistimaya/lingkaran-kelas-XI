@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Misi Lingkaran — Bubble Pop Math</title>
+<style>
+:root{--ink:#172554;--blue:#2563eb;--cyan:#06b6d4;--gold:#fbbf24}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,Segoe UI,Arial,sans-serif;color:#172033;background:radial-gradient(circle at top,#dbeafe,#eef2ff 50%,#fef3c7);min-height:100vh}
+header{padding:22px 14px;text-align:center;color:white;background:linear-gradient(110deg,#172554,#2563eb,#0891b2)}
+header h1{margin:0;font-size:clamp(1.6rem,4vw,2.4rem)}header p{margin:6px 0 0;color:#dbeafe}
+main{max-width:960px;margin:22px auto;padding:0 14px 36px}.card{background:#ffffffed;border:1px solid #dbeafe;border-radius:22px;padding:clamp(17px,4vw,28px);box-shadow:0 14px 34px #1e3a8a18}
+h2{color:#1e3a8a;margin-top:0}.muted{color:#64748b;line-height:1.6}.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
+label{display:block;font-weight:700;margin-bottom:6px}input{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:11px;font:inherit}
+button{border:0;border-radius:12px;padding:12px 17px;font-weight:800;font-size:1rem;cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}
+.primary{background:linear-gradient(100deg,#2563eb,#0891b2);color:white}.soft{background:#e2e8f0;color:#1e293b}
+.rules{background:#eff6ff;border-radius:14px;padding:14px 18px;line-height:1.65;margin:16px 0}.hide{display:none!important}
+.hud{display:flex;justify-content:space-between;gap:9px;flex-wrap:wrap;margin-bottom:12px}.tag{background:#dbeafe;color:#1e40af;border-radius:99px;padding:8px 12px;font-weight:800;font-size:.9rem}.timer{background:#fff7ed;color:#9a3412}
+.track{height:9px;background:#e2e8f0;border-radius:99px;overflow:hidden;margin:12px 0 20px}.fill{height:100%;width:0;background:linear-gradient(90deg,#2563eb,#06b6d4)}
+.prompt{font-size:1.22rem;font-weight:850;line-height:1.45;margin:12px 0}.arena{min-height:280px;position:relative;overflow:hidden;border-radius:18px;background:linear-gradient(145deg,#0f172a,#1e3a8a 65%,#164e63);padding:16px;color:white}
+.arena:before,.arena:after{content:"";position:absolute;border:1px solid #93c5fd33;border-radius:50%;width:240px;height:240px;left:12%;top:30px;pointer-events:none}.arena:after{width:340px;height:340px;left:auto;right:-60px;top:90px}
+.arenahead{position:relative;z-index:1;display:flex;justify-content:space-between;gap:8px;font-size:.9rem;color:#bfdbfe}
+.bubbles{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;min-height:205px;padding:20px 0}
+.bubble{width:clamp(105px,22vw,150px);height:clamp(105px,22vw,150px);border-radius:50%;display:flex;align-items:center;justify-content:center;text-align:center;padding:12px;color:#10204b;font-size:1rem;font-weight:900;border:4px solid #ffffffa8;box-shadow:inset -8px -10px 20px #1e3a8a30,0 8px 18px #02061766;background:radial-gradient(circle at 30% 24%,#fff 0 5%,#bfdbfe 22%,#60a5fa 72%,#2563eb);transition:.15s;animation:float 2.5s ease-in-out infinite}
+.bubble:nth-child(2){background:radial-gradient(circle at 30% 24%,#fff 0 5%,#fef3c7 22%,#fbbf24 72%,#d97706);animation-delay:.25s}
+.bubble:nth-child(3){background:radial-gradient(circle at 30% 24%,#fff 0 5%,#ccfbf1 22%,#5eead4 72%,#0f766e);animation-delay:.5s}
+.bubble:nth-child(4){background:radial-gradient(circle at 30% 24%,#fff 0 5%,#fce7f3 22%,#f9a8d4 72%,#be185d);animation-delay:.75s}
+.bubble:hover{transform:scale(1.08)}.bubble:disabled{opacity:.55;cursor:default;animation:none}.bubble.correct{outline:5px solid #86efac;transform:scale(1.07)}.bubble.wrong{outline:5px solid #fca5a5}
+@keyframes float{0%,100%{translate:0 0}50%{translate:0 -7px}}
+.feedback{padding:14px;border-radius:13px;margin-top:14px;line-height:1.55}.yes{background:#dcfce7;color:#166534}.no{background:#fee2e2;color:#991b1b}
+.actions{display:flex;justify-content:flex-end;margin-top:16px}.scorebig{text-align:center;font-size:3rem;font-weight:950;color:#1d4ed8}.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:18px 0}.stat{text-align:center;background:#f1f5f9;border-radius:13px;padding:13px}.stat b{display:block;font-size:1.4rem;color:#1e40af}.review{border-top:1px solid #e2e8f0;padding:13px 0;line-height:1.55}
+footer{text-align:center;color:#64748b;font-size:.85rem;padding:12px}
+@media(max-width:520px){.bubble{width:112px;height:112px;font-size:.9rem}.arena{padding:12px}.prompt{font-size:1.08rem}}
+@media print{header,.actions button{display:none}.card{box-shadow:none}}
+</style></head>
+<body>
+<header><h1>🫧 MISI LINGKARAN</h1><p>Bubble Pop Math • Game Aksi Matematika Kelas XI SMA</p></header>
+<main>
+<section class="card" id="intro">
+<h2>🌟 Selamat datang, Penjelajah Geometri!</h2>
+<p class="muted">Pecahkan gelembung jawaban yang tepat untuk menyelesaikan misi. Setiap jawaban benar akan menambah skor dan membuka tantangan berikutnya. Teliti sebelum memilih!</p>
+<div class="fields">
+<div><label for="student">Nama siswa</label><input id="student" placeholder="Nama lengkap"></div>
+<div><label for="presence">Nomor presensi</label><input id="presence" placeholder="Nomor presensi"></div>
+<div><label for="classroom">Kelas</label><input id="classroom" placeholder="Contoh: XI IPA 1"></div>
+</div>
+<div class="rules"><b>🎮 Cara bermain</b><br>1. Baca pertanyaan yang muncul di layar.<br>2. Klik gelembung yang berisi jawaban paling tepat.<br>3. Jawaban benar mendapat 10 poin; jawaban salah mengurangi satu nyawa.<br>4. Selesaikan 4 level dengan total 20 tantangan.<br>5. Waktu permainan 15 menit. Tersedia 5 nyawa.<br><br><b>📘 Materi:</b> unsur lingkaran, teorema lingkaran, panjang busur, dan luas juring.</div>
+<button class="primary" id="start">Mulai Misi 🚀</button>
+</section>
+<section class="card hide" id="game">
+<div class="hud"><span class="tag" id="level">LEVEL 1</span><span class="tag" id="points">⭐ 0 poin</span><span class="tag" id="lives">❤️❤️❤️❤️❤️</span><span class="tag timer" id="clock">⏱ 15:00</span></div>
+<div class="track"><div class="fill" id="progress"></div></div>
+<div class="muted" id="category"></div><div class="prompt" id="prompt"></div>
+<div class="arena"><div class="arenahead"><span>🎯 PILIH GELEMBUNG JAWABAN</span><span id="mission">Misi 1/20</span></div><div class="bubbles" id="bubbles"></div></div>
+<div id="feedback" class="feedback hide"></div>
+<div class="actions"><button class="primary hide" id="continue">Lanjutkan →</button></div>
+</section>
+<section class="card hide" id="result">
+<h2>🏁 Misi selesai!</h2><p class="muted" id="identity" style="text-align:center"></p><div class="scorebig" id="finalScore">0</div><p class="muted" style="text-align:center">Skor akhir</p>
+<div class="stats"><div class="stat"><b id="right">0</b>Benar</div><div class="stat"><b id="missed">0</b>Salah</div><div class="stat"><b id="timeUsed">0:00</b>Waktu digunakan</div><div class="stat"><b id="rank">-</b>Predikat</div></div>
+<div class="rules" id="evaluation"></div><h2>📖 Rekap pembahasan</h2><div id="recap"></div>
+<div class="actions" style="justify-content:space-between"><button class="soft" onclick="window.print()">Cetak hasil</button><button class="primary" onclick="location.reload()">Main lagi</button></div>
+</section>
+</main><footer>Game edukasi interaktif • Matematika kelas XI • Dapat dimainkan secara offline</footer>
+<script>
+const bank=[
+["Unsur Lingkaran","Garis dari titik pusat ke titik pada lingkaran disebut …",["Diameter","Jari-jari","Tali busur","Busur"],1,"Jari-jari menghubungkan titik pusat dengan satu titik pada lingkaran."],
+["Unsur Lingkaran","Tali busur yang melalui titik pusat disebut …",["Apotema","Busur","Diameter","Juring"],2,"Diameter adalah tali busur yang melalui pusat dan panjangnya 2r."],
+["Unsur Lingkaran","Daerah yang dibatasi dua jari-jari dan satu busur adalah …",["Tembereng","Juring","Apotema","Tali busur"],1,"Juring merupakan bagian lingkaran yang dibatasi dua jari-jari dan sebuah busur."],
+["Unsur Lingkaran","Garis dari pusat yang tegak lurus tali busur disebut …",["Apotema","Diameter","Busur","Tembereng"],0,"Apotema adalah jarak tegak lurus dari pusat ke tali busur."],
+["Unsur Lingkaran","Jika jari-jari 8 cm, diameter lingkaran adalah …",["4 cm","8 cm","16 cm","24 cm"],2,"Diameter = 2r = 2 × 8 = 16 cm."],
+["Teorema Lingkaran","Sudut keliling yang menghadap diameter besarnya …",["45°","60°","90°","180°"],2,"Sudut keliling yang menghadap diameter selalu 90°."],
+["Teorema Lingkaran","Sudut pusat 120°. Sudut keliling yang menghadap busur sama adalah …",["30°","60°","120°","240°"],1,"Sudut keliling = setengah sudut pusat = 60°."],
+["Teorema Lingkaran","Dua sudut keliling menghadap busur yang sama akan …",["Sama besar","Berjumlah 90°","Berjumlah 180°","Selalu berbeda"],0,"Sudut keliling yang menghadap busur yang sama memiliki besar sama."],
+["Teorema Lingkaran","Pada segiempat tali busur, jumlah sudut berhadapan adalah …",["90°","180°","270°","360°"],1,"Sudut-sudut berhadapan pada segiempat siklik berjumlah 180°."],
+["Teorema Lingkaran","Jari-jari pada titik singgung tegak lurus terhadap …",["Busur","Garis singgung","Diameter","Tali busur"],1,"Jari-jari dan garis singgung membentuk sudut 90° pada titik singgung."],
+["Panjang Busur","Rumus panjang busur (θ dalam derajat) adalah …",["θ/360 × 2πr","θ/360 × πr²","2πr²","πr/θ"],0,"Panjang busur adalah bagian θ/360 dari keliling lingkaran."],
+["Panjang Busur","r = 14 cm, θ = 90°. Panjang busur (π = 22/7) adalah …",["11 cm","22 cm","44 cm","88 cm"],1,"s = 90/360 × 2 × 22/7 × 14 = 22 cm."],
+["Panjang Busur","Keliling lingkaran 80 cm. Busur dengan sudut pusat 90° panjangnya …",["10 cm","20 cm","30 cm","40 cm"],1,"s = 90/360 × 80 = 20 cm."],
+["Panjang Busur","Jika sudut pusat menjadi 3 kali dan r tetap, panjang busur menjadi …",["1/3 kali","2 kali","3 kali","9 kali"],2,"Panjang busur sebanding dengan sudut pusat ketika jari-jari tetap."],
+["Panjang Busur","Diameter 28 cm. Panjang setengah lingkaran (π = 22/7) adalah …",["22 cm","44 cm","66 cm","88 cm"],1,"Setengah keliling = ½ × π × 28 = 44 cm."],
+["Luas Juring","Rumus luas juring (θ dalam derajat) adalah …",["θ/360 × 2πr","θ/360 × πr²","πr²/θ","2πr × θ"],1,"Luas juring adalah bagian θ/360 dari luas lingkaran."],
+["Luas Juring","r = 14 cm, θ = 90°. Luas juring (π = 22/7) adalah …",["77 cm²","154 cm²","308 cm²","616 cm²"],1,"L = 90/360 × 22/7 × 14² = 154 cm²."],
+["Luas Juring","Luas lingkaran 100π cm². Juring 72° luasnya …",["10π cm²","20π cm²","25π cm²","50π cm²"],1,"L juring = 72/360 × 100π = 20π cm²."],
+["Luas Juring","Jika jari-jari menjadi 2 kali, luas juring dengan sudut tetap menjadi …",["2 kali","3 kali","4 kali","8 kali"],2,"Luas sebanding dengan r², sehingga (2r)² = 4r²."],
+["Luas Juring","r = 7 cm dan θ = 180°. Luas juring (π = 22/7) adalah …",["38,5 cm²","77 cm²","154 cm²","308 cm²"],1,"L = 180/360 × 22/7 × 49 = 77 cm²."]
+];
+let order=[],pos=0,score=0,lives=5,correct=0,wrong=0,history=[],seconds=900,startTime=0,timer=null,locked=false;
+const el=id=>document.getElementById(id);
+function shuffle(a){return a.map(x=>[Math.random(),x]).sort((a,b)=>a[0]-b[0]).map(x=>x[1])}
+function begin(){if(!el("student").value.trim()||!el("presence").value.trim()||!el("classroom").value.trim()){alert("Isi nama, nomor presensi, dan kelas terlebih dahulu.");return}
+order=shuffle(bank);el("intro").classList.add("hide");el("game").classList.remove("hide");startTime=Date.now();showQuestion();timer=setInterval(()=>{seconds--;showClock();if(seconds<=0)endGame("Waktu habis.");},1000)}
+function showClock(){el("clock").textContent="⏱ "+String(Math.floor(seconds/60)).padStart(2,"0")+":"+String(seconds%60).padStart(2,"0")}
+function showQuestion(){locked=false;let q=order[pos],level=Math.floor(pos/5)+1;el("level").textContent="LEVEL "+level+" • "+["","PEMULA","PENJELAJAH","AHLI GEOMETRI","MASTER LINGKARAN"][level];el("points").textContent="⭐ "+score+" poin";el("lives").textContent="❤️".repeat(lives)+"🖤".repeat(5-lives);el("mission").textContent="Misi "+(pos+1)+"/"+order.length;el("progress").style.width=(pos/order.length*100)+"%";el("category").textContent=q[0];el("prompt").textContent=q[1];el("feedback").classList.add("hide");el("continue").classList.add("hide");
+let choices=q[2].map((v,i)=>({v,correct:i===q[3]}));choices=shuffle(choices);el("bubbles").innerHTML="";
+choices.forEach(c=>{let b=document.createElement("button");b.className="bubble";b.textContent=c.v;b.onclick=()=>choose(b,c,q);el("bubbles").appendChild(b)})}
+function choose(button,c,q){if(locked)return;locked=true;document.querySelectorAll(".bubble").forEach(b=>b.disabled=true);
+let ok=c.correct;if(ok){score+=10;correct++;button.classList.add("correct")}else{lives--;wrong++;button.classList.add("wrong");[...document.querySelectorAll(".bubble")].forEach(b=>{if(b.textContent===q[2][q[3]])b.classList.add("correct")})}
+history.push({q,chosen:c.v,ok});el("points").textContent="⭐ "+score+" poin";el("lives").textContent="❤️".repeat(lives)+"🖤".repeat(5-lives);
+el("feedback").className="feedback "+(ok?"yes":"no");el("feedback").innerHTML=`<b>${ok?"✨ Tepat! +10 poin":"💡 Belum tepat."}</b><br>${ok?"Kamu berhasil memecahkan gelembung jawaban!": "Jawaban yang benar: <b>"+q[2][q[3]]+"</b>."}<br><b>Pembahasan:</b> ${q[4]}`;
+el("continue").classList.remove("hide");el("continue").textContent=(pos===order.length-1||lives===0)?"Lihat hasil 🏆":"Lanjutkan →"}
+function next(){if(pos===order.length-1||lives===0){endGame(lives===0?"Nyawa habis.":"Semua misi selesai.");return}pos++;showQuestion()}
+function endGame(reason){clearInterval(timer);el("game").classList.add("hide");el("result").classList.remove("hide");let elapsed=Math.floor((Date.now()-startTime)/1000),grade=score>=180?"Sangat Baik":score>=140?"Baik":score>=100?"Cukup":"Perlu Latihan";el("identity").textContent=el("student").value+" • Presensi "+el("presence").value+" • "+el("classroom").value;el("finalScore").textContent=score+" / 200";el("right").textContent=correct;el("missed").textContent=wrong+(bank.length-history.length);el("timeUsed").textContent=Math.floor(elapsed/60)+":"+String(elapsed%60).padStart(2,"0");el("rank").textContent=grade;
+let topics={};history.forEach(h=>{let t=h.q[0];topics[t]??={c:0,n:0};topics[t].n++;if(h.ok)topics[t].c++});let notes=Object.entries(topics).map(([t,v])=>`<li><b>${t}</b>: ${v.c}/${v.n} benar. ${v.c===v.n?"Pertahankan!":"Pelajari kembali konsep dan contoh soal pada bagian ini."}</li>`).join("");
+el("evaluation").innerHTML=`<b>Hasil misi:</b> ${reason}<br><b>Evaluasi belajar:</b> ${score>=150?"Pemahamanmu sudah baik. Tantang dirimu dengan soal yang lebih kompleks.":"Ulangi materi yang belum dikuasai. Buat catatan rumus dan kerjakan latihan secara bertahap."}<br><br><b>Evaluasi per materi:</b><ul>${notes||"<li>Belum ada soal yang dijawab.</li>"}</ul><b>Tips:</b> Bedakan rumus panjang busur (menggunakan r) dan luas juring (menggunakan r²). Perhatikan pula hubungan sudut pusat dan sudut keliling.`;
+el("recap").innerHTML=history.map((h,i)=>`<div class="review"><b>${i+1}. ${h.q[0]} — ${h.ok?"Benar":"Belum tepat"}</b><br>${h.q[1]}<br>Jawabanmu: ${h.chosen}<br>Kunci: ${h.q[2][h.q[3]]}<br><b>Pembahasan:</b> ${h.q[4]}</div>`).join("")}
+el("start").onclick=begin;el("continue").onclick=next;
+</script></body></html>
